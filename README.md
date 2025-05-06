@@ -1,5 +1,3 @@
-# Gest-o-de-Redes-de-Computadores-em-Docker
-
 # Documentação do Projeto de Redes com Docker
 
 ## 1. Introdução
