@@ -97,15 +97,3 @@ networks:
       config:
         - subnet: 192.168.20.0/24 # Define a faixa de endereços (Sub-rede)
           gateway: 192.168.20.1 # Define o endereço da porta de saída (Gateway)
-
-# networks:
-#   servers_net:
-#     driver: bridge
-#     ipam:
-#       config:
-#         - subnet: 192.168.10.0/24
-#   clients_net:
-#     driver: bridge
-#     ipam:
-#       config:
-#         - subnet: 192.168.20.0/24
