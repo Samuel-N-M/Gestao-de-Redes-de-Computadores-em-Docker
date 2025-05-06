@@ -1,12 +1,10 @@
 # Documentação do Projeto de Redes com Docker
 
-## 1. Introdução
-
 Este projeto simula uma infraestrutura de rede completa utilizando containers Docker. Cada container representa um serviço essencial em uma rede corporativa, como DHCP, DNS, LDAP, FTP, servidor web, compartilhamento via Samba, e um roteador. O principal objetivo é oferecer um ambiente controlado e reproduzível para estudos e testes de redes.
 
 A orquestração dos containers é feita via `docker-compose`, garantindo que os serviços sejam iniciados na ordem correta, com as devidas dependências de rede entre si.
 
-## 2. Estrutura do Projeto
+## 1. Estrutura do Projeto
 
 O projeto está organizado da seguinte forma:
 
@@ -48,4 +46,6 @@ projetoredes/
 
 Cada subdiretório dentro de `config/` representa a configuração de um serviço específico da rede. Dentro de cada um, há ao menos um `Dockerfile` com instruções de build da imagem correspondente e os arquivos de configuração necessários para o serviço funcionar corretamente.
 
-Nos próximos tópicos, será feita uma análise detalhada de cada serviço, incluindo sua finalidade, configuração e integração com os demais componentes da rede.
+## 2. Como executar o projeto:
+
+## 3. Testes das implementações:
