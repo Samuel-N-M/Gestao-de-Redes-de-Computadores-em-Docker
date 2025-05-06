@@ -48,4 +48,19 @@ Cada subdiretório dentro de `config/` representa a configuração de um serviç
 
 ## 2. Como executar o projeto:
 
+Entre no github no repositório do projeto e copie o link do repositório.
+
+Em seugida clone o repositório no seu computado dor com o seguinte comando:
+```
+git clone https://github.com/Samuel-N-M/Gestao-de-Redes-de-Computadores-em-Docker.git
+```
+Abra a pasta que foi clonada e navegue até a pasta projetoredes.
+
+Abra a pasta projetoredes pelo terminal e execute o seguinte comando:
+```
+docker compose up -d
+```
+Esse comando irá criar toda a estrutura do projeto seus conteiner e redes.
+
+
 ## 3. Testes das implementações:
