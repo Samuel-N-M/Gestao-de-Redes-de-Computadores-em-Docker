@@ -1,0 +1,111 @@
+version: '3.8'
+
+services:
+  router:
+    build: ./config/router
+    container_name: router
+    privileged: true 
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    networks:
+      servers_net:
+        ipv4_address: 192.168.10.254
+      clients_net:
+        ipv4_address: 192.168.20.254
+
+  dhcp:
+    build: ./config/dhcp
+    container_name: dhcp
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    networks:
+      clients_net:
+        ipv4_address: 192.168.20.2
+    volumes:
+      - ./config/dhcp/leases:/var/lib/dhcp
+    depends_on:
+      - router
+
+  ldap:
+    build: ./config/ldap
+    container_name: ldap
+    restart: unless-stopped
+    networks:
+      servers_net:
+        ipv4_address: 192.168.10.3
+    environment:
+      LDAP_ORGANISATION: "Redes"
+      LDAP_DOMAIN: "redes.local"
+      LDAP_ADMIN_PASSWORD: "admin123"
+
+  samba:
+    build: ./config/samba
+    container_name: samba
+    restart: unless-stopped
+    networks:
+      servers_net:
+        ipv4_address: 192.168.10.4
+    volumes:
+      - ./config/samba/share:/srv/samba
+    depends_on:
+      - ldap
+
+  ftp:
+    build: ./config/ftp
+    container_name: ftp
+    restart: unless-stopped
+    networks:
+      servers_net:
+        ipv4_address: 192.168.10.5
+    depends_on:
+      - router
+
+  web:
+    build: ./config/web
+    container_name: web
+    restart: unless-stopped
+    networks:
+      servers_net:
+        ipv4_address: 192.168.10.6
+
+  dns:
+    build: ./config/dns
+    container_name: dns
+    restart: unless-stopped
+    networks:
+      servers_net:
+        ipv4_address: 192.168.10.7
+    depends_on:
+      - router
+
+
+networks:
+  servers_net: # Nome da nossa primeira rede (corredor)
+    driver: bridge # Tipo de rede (bridge é o padrão e funciona como uma rede local virtual)
+    ipam: # Seção para Gerenciamento de Endereços IP (IP Address Management)
+      driver: default # Usar o gerenciador de IPs padrão do Docker
+      config: # Lista de configurações de IP para esta rede
+        - subnet: 192.168.10.0/24 # Define a faixa de endereços (Sub-rede)
+          gateway: 192.168.10.1 # Define o endereço da porta de saída (Gateway)
+
+  clients_net: # Nome da nossa segunda rede (corredor)
+    driver: bridge # Tipo de rede
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.20.0/24 # Define a faixa de endereços (Sub-rede)
+          gateway: 192.168.20.1 # Define o endereço da porta de saída (Gateway)
+
+# networks:
+#   servers_net:
+#     driver: bridge
+#     ipam:
+#       config:
+#         - subnet: 192.168.10.0/24
+#   clients_net:
+#     driver: bridge
+#     ipam:
+#       config:
+#         - subnet: 192.168.20.0/24

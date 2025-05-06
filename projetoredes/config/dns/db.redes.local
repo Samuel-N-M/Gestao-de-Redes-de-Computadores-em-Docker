@@ -1,0 +1,15 @@
+$TTL 604800
+@   IN  SOA dns.redes.local. admin.redes.local. (
+            2         ; Serial
+            604800    ; Refresh
+            86400     ; Retry
+            2419200   ; Expire
+            604800 )  ; Negative Cache TTL
+;
+@       IN  NS      dns.redes.local.
+router  IN  A       192.168.10.254
+dns     IN  A       192.168.10.7
+ldap    IN  A       192.168.10.3
+samba   IN  A       192.168.10.4
+ftp     IN  A       192.168.10.5
+web     IN  A       192.168.10.6
