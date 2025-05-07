@@ -82,18 +82,18 @@ services:
 
 
 networks:
-  servers_net: # Nome da nossa primeira rede (corredor)
+  servers_net: # Nome da nossa primeira red
     driver: bridge # Tipo de rede (bridge é o padrão e funciona como uma rede local virtual)
     ipam: # Seção para Gerenciamento de Endereços IP (IP Address Management)
       driver: default # Usar o gerenciador de IPs padrão do Docker
       config: # Lista de configurações de IP para esta rede
         - subnet: 192.168.10.0/24 # Define a faixa de endereços (Sub-rede)
-          gateway: 192.168.10.1 # Define o endereço da porta de saída (Gateway)
+          # gateway: 192.168.10.1 # Define o endereço da porta de saída (Gateway)
 
-  clients_net: # Nome da nossa segunda rede (corredor)
+  clients_net: # Nome da nossa segunda rede
     driver: bridge # Tipo de rede
     ipam:
       driver: default
       config:
         - subnet: 192.168.20.0/24 # Define a faixa de endereços (Sub-rede)
-          gateway: 192.168.20.1 # Define o endereço da porta de saída (Gateway)
+          # gateway: 192.168.20.1 # Define o endereço da porta de saída (Gateway)
