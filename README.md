@@ -78,26 +78,29 @@ Configurar um cliente DHCP em outro container:
 Explicação: Para testar, é necessário um cliente DHCP na mesma rede Docker. Criar um container temporário é uma maneira prática de fazer isso.
 
 Exemplo em um container Debian conectado à mesma rede
-
 ```
 docker run --rm --network projetoredes_default -it debian:latest bash
 ```
 
 Dentro do container:
-
 ```
 apt update && apt install -y isc-dhcp-client
 dhclient -v eth0
+```
+
 Verificar se o IP foi obtido:
+```
 cat /var/lib/dhcp/dhclient.leases
+```
+
 Verificar os leases no servidor:
+```
 docker exec -it projetoredes_dhcp_1 cat /data/dhcpd.leases
 ```
 
 ### 2. DNS
 Este teste verifica se o servidor DNS está resolvendo nomes corretamente, tanto locais quanto externos (com recurso).
 Obter o IP do container DNS:
-
 ```
 DNS_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' projetoredes_dns_1)
 echo $DNS_IP
@@ -105,14 +108,12 @@ echo $DNS_IP
 
 Explicação: O IP do container DNS será usado para testar as consultas.
 Testar resolução de nome local:
-
 ```
 dig @$DNS_IP host.redes.local A +short
 ```
 
 Explicação: O dig consulta o servidor DNS pelo IP associado ao nome host.redes.local.
 Testar resolução de nome externo (recursão):
-
 ```
 dig @$DNS_IP google.com A +short
 ```
@@ -123,14 +124,12 @@ Explicação: Verifica se o servidor DNS consegue resolver nomes externos, repas
 Este teste verifica se o servidor FTP permite conexões, login e transferência de arquivos.
 
 Obter o IP do container FTP:
-
 ```
 FTP_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' projetoredes_ftp_1)
 echo $FTP_IP
 ```
 
 Conectar e testar upload/download:
-
 ```
 ftp $FTP_IP
 No prompt FTP: insira usuário/senha (ex: test/test). Antes disso, crie um arquivo para teste:
@@ -148,16 +147,19 @@ Verificar o arquivo no servidor:
 ```
 docker exec -it projetoredes_ftp_1 ls /ftp-share
 ```
-4. LDAP
+### 4. LDAP
 Este teste avalia se o servidor LDAP está acessível e responde a consultas.
 Obter o IP do container LDAP:
+```
 LDAP_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' projetoredes_ldap_1)
 echo $LDAP_IP
+```
 
 Instalar cliente LDAP e consultar:
+```
 apt install -y ldap-utils
 ldapsearch -x -H ldap://$LDAP_IP -b "dc=redes,dc=local" "(objectClass=*)"
-
+```
 Explicação:
 ldapsearch é o comando de consulta.
 
@@ -173,46 +175,61 @@ ldapsearch é o comando de consulta.
 
 O filtro (objectClass=*) retorna todos os objetos.
 
-5. Router
+### 5. Router
 Esse teste valida se o container roteador está encaminhando tráfego entre redes diferentes.
 Obter o IP do container Router:
+```
 ROUTER_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' projetoredes_router_1)
 echo $ROUTER_IP
+```
 
 Verificar a tabela de rotas:
+```
 docker exec -it projetoredes_router_1 ip route
+```
 
-Resultado esperado: A tabela deve listar as rotas conhecidas e a rota padrão, indicando para onde o tráfego deve ser encaminhado.
 Testar comunicação entre sub-redes:
+```
 ping -c 4 <IP_de_um_serviço_em_outra_sub-rede>
+```
 
 Explicação: Use um container de uma rede (como o cliente DHCP) para pingar outro em uma rede diferente (como Web ou Samba).
 
-6. Samba
+### 6. Samba
 Este teste verifica o compartilhamento de arquivos via protocolo SMB (Samba).
 Obter o IP do container Samba:
+```
 SAMBA_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' projetoredes_samba_1)
 echo $SAMBA_IP
+```
 
 Montar o compartilhamento no host:
+```
 sudo mkdir /mnt/samba_test
 sudo mount -t cifs //$SAMBA_IP/public /mnt/samba_test -o guest,vers=2.0
 ls /mnt/samba_test
+```
 
 Explicação: Montar o compartilhamento público do Samba no sistema de arquivos local usando acesso como convidado.
 Resultado esperado: O diretório deve ser montado com sucesso e os arquivos compartilhados devem ser listados.
+
 Testar escrita e leitura:
+```
 sudo touch /mnt/samba_test/exemplo.txt
 ls /mnt/samba_test
 cat /mnt/samba_test/exemplo.txt
+```
 
-7. Web
+### 7. Web
 Este teste verifica se o servidor web está acessível e servindo páginas HTTP.
 Obter o IP do container Web:
+```
 WEB_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' projetoredes_web_1)
 echo $WEB_IP
+```
 
 Fazer requisições HTTP:
+```
 curl -I http://$WEB_IP     # Mostra apenas os cabeçalhos
 curl http://$WEB_IP        # Mostra o conteúdo da página
-
+```
